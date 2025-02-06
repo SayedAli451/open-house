@@ -27,11 +27,11 @@ const listingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
-    favoritedByUserss : {
+    favoritedByUserss: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }
-}, {timestamps: true})
+    },
+}, { timestamps: true })
 
 const Listing = mongoose.model('Listing', listingSchema)
 
