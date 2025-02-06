@@ -1,4 +1,4 @@
-require('dotenv').config()
+    require('dotenv').config()
 // const dotenv = require('dotenv')
 // dotenv.config()
 const express = require('express')
@@ -23,6 +23,7 @@ mongoose.connection.on('connected', () => {
 
 // MIDDLEWARE
 app.use(express.urlencoded({ extended: false }))
+app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, "public")))
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -44,6 +45,7 @@ app.use(passUserToView)
 const pagesCtrl = require('./controllers/pages')
 const authCtrl = require('./controllers/auth')
 const vipCtrl = require('./controllers/vip')
+const listingsCtrl = require('./controllers/listings.controller')
 
 // ROUTE HANDLERS
 app.get('/', pagesCtrl.home)
@@ -54,6 +56,17 @@ app.post('/auth/sign-in', authCtrl.signIn)
 app.get('/auth/sign-out', authCtrl.signOut)
 app.get('/vip-lounge', isSignedIn, vipCtrl.welcome)
 
-app.listen(port, () => {
+app.use(isSignedIn) // must be signed in to see below routes
+// LISTINGS HANDLERS
+app.get('/listings', listingsCtrl.index)
+app.get('/listings/new', listingsCtrl.newListing)
+// app.post('/listings', listingsCtrl.createListing)
+app.post('/listings/:userId', listingsCtrl.createListing)
+app.get('/listings/:listingId', listingsCtrl.show)
+app.delete('/listings/:userId/:listingId', listingsCtrl.deleteListing)
+app.get('/listings/:userId/:listingId/edit', listingsCtrl.edit)
+app.put('/listings/:userId/:listingId', listingsCtrl.update)
+ 
+app.listen(port, () => { 
     console.log(`The express app is ready on port ${port}`)
 })
